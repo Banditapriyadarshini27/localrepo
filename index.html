@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bandita Priyadarshini — Access Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12141c;
+    --bg-grid: #171a24;
+    --surface: #1a1e2b;
+    --surface-2: #212637;
+    --border: rgba(238,240,244,0.09);
+    --border-strong: rgba(238,240,244,0.18);
+    --text: #eef0f4;
+    --text-muted: #8b93a8;
+    --text-faint: #545c72;
+    --amber: #e2a640;
+    --amber-dim: rgba(226,166,64,0.15);
+    --cyan: #6fb3c0;
+    --cyan-dim: rgba(111,179,192,0.15);
+    --revoke: #d9634a;
+
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(226,166,64,0.06), transparent),
+      radial-gradient(ellipse 700px 600px at 100% 20%, rgba(111,179,192,0.05), transparent),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  ::selection { background: var(--amber-dim); color: var(--amber); }
+
+  .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(18,20,28,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 28px;
+    max-width: 1080px; margin: 0 auto;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em; color: var(--text-muted);}
+  .brand .dot{ width:7px; height:7px; border-radius:50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:0.35} }
+  .navlinks{ display:flex; gap: 24px; font-family: var(--mono); font-size: 12.5px; }
+  .navlinks a{ text-decoration:none; color: var(--text-muted); transition: color .15s; }
+  .navlinks a:hover{ color: var(--amber); }
+  @media (max-width: 640px){ .navlinks{ display:none; } }
+
+  /* ---------- hero ---------- */
+  .hero{ padding: 72px 0 56px; }
+  .boot{
+    font-family: var(--mono); font-size: 12.5px; color: var(--cyan);
+    margin: 0 0 28px; min-height: 20px;
+  }
+  .boot .cursor{ display:inline-block; width:7px; height: 13px; background: var(--cyan); margin-left:2px; vertical-align:-2px; animation: blink 1s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-grid{ display:grid; grid-template-columns: 1.15fr 0.85fr; gap: 44px; align-items: center; }
+  @media (max-width: 860px){ .hero-grid{ grid-template-columns: 1fr; } }
+
+  .hero h1{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(2.1rem, 5vw, 3.1rem);
+    margin: 0 0 14px; letter-spacing: -0.01em;
+  }
+  .hero .role{ font-family: var(--mono); color: var(--amber); font-size: 14px; margin-bottom: 20px; }
+  .hero p.lede{ color: var(--text-muted); font-size: 16px; max-width: 46ch; }
+
+  /* credential card */
+  .card-stage{ display:flex; justify-content:center; }
+  .cred-card{
+    width: 100%; max-width: 320px;
+    background: linear-gradient(155deg, var(--surface-2), var(--surface));
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    position: relative;
+    box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6);
+  }
+  .cred-card::before{
+    content:'';
+    position:absolute; inset:0; border-radius:14px; padding:1px;
+    background: linear-gradient(120deg, var(--amber), transparent 40%, transparent 60%, var(--cyan));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0.5; pointer-events:none;
+  }
+  .cred-top{ display:flex; justify-content:space-between; align-items:flex-start; font-family: var(--mono); font-size: 10.5px; color: var(--text-faint); text-transform:uppercase; letter-spacing:0.08em; }
+  .cred-status{ display:flex; align-items:center; gap:6px; color: var(--cyan); }
+  .cred-status .led{ width:6px; height:6px; border-radius:50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .cred-name{ font-family: var(--display); font-weight:600; font-size: 21px; margin: 16px 0 2px; }
+  .cred-role{ font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); margin-bottom: 18px; }
+  .cred-row{ display:flex; justify-content:space-between; font-family: var(--mono); font-size: 10.5px; color: var(--text-faint); border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 10px; }
+  .cred-row b{ color: var(--amber); font-weight: 500; }
+  .barcode{ display:flex; gap:2px; height: 24px; margin: 14px 0 6px; align-items: stretch; }
+  .barcode span{ background: var(--border-strong); flex: 0 0 auto; }
+
+  /* ---------- section shell ---------- */
+  section{ padding: 60px 0; border-top: 1px solid var(--border); }
+  .eyebrow{ font-family: var(--mono); font-size: 11.5px; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; display:flex; align-items:center; gap:10px; margin-bottom: 22px; }
+  .eyebrow::after{ content:''; flex:1; height:1px; background: var(--border); }
+  h2.sec-title{ font-family: var(--display); font-size: 1.5rem; margin: -14px 0 26px; }
+
+  /* ---------- scopes / skills ---------- */
+  .scope-groups{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 22px; }
+  .scope-group{ background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .scope-group h3{ font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin: 0 0 12px; font-weight: 500; }
+  .chips{ display:flex; flex-wrap: wrap; gap: 7px; }
+  .chip{ font-family: var(--mono); font-size: 12px; padding: 5px 10px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); }
+  .chip.on{ color: var(--amber); border-color: rgba(226,166,64,0.35); background: var(--amber-dim); }
+
+  /* ---------- project ledger ---------- */
+  .ledger{ display:flex; flex-direction:column; }
+  .proc{
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    margin-bottom: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .proc::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background: var(--text-faint);
+  }
+  .proc[data-status="deployed"]::before, .proc[data-status="live"]::before{ background: var(--cyan); }
+  .proc[data-status="research"]::before{ background: var(--amber); }
+  .proc[data-status="shipped"]::before{ background: var(--text-faint); }
+
+  .proc-head{
+    display:flex; align-items:center; justify-content:space-between; gap: 16px;
+    padding: 16px 20px 16px 24px; cursor:pointer; user-select:none;
+  }
+  .proc-title{ display:flex; flex-direction:column; gap:4px; }
+  .proc-title .name{ font-family: var(--display); font-weight:600; font-size: 16.5px; }
+  .proc-title .tag{ font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+  .proc-status{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform:uppercase;
+    padding: 4px 9px; border-radius: 5px; white-space:nowrap; flex-shrink:0;
+    color: var(--text-muted); background: var(--surface-2); border: 1px solid var(--border);
+  }
+  .proc[data-status="deployed"] .proc-status, .proc[data-status="live"] .proc-status{ color: var(--cyan); border-color: rgba(111,179,192,0.35); background: var(--cyan-dim); }
+  .proc[data-status="research"] .proc-status{ color: var(--amber); border-color: rgba(226,166,64,0.35); background: var(--amber-dim); }
+
+  .proc-chevron{ font-family: var(--mono); color: var(--text-faint); transition: transform .2s ease; flex-shrink:0; }
+  .proc.open .proc-chevron{ transform: rotate(90deg); }
+
+  .proc-body{
+    max-height: 0; overflow:hidden; transition: max-height .35s ease;
+    padding: 0 24px; border-top: 1px solid transparent;
+  }
+  .proc.open .proc-body{ border-top-color: var(--border); }
+  .proc-body-inner{ padding: 16px 0 20px; }
+  .proc-body p{ margin: 0 0 14px; color: var(--text-muted); font-size: 14.5px; max-width: 68ch; }
+  .stack-row{ display:flex; flex-wrap:wrap; gap:6px; font-family: var(--mono); font-size: 11.5px; }
+  .stack-row span{ padding:3px 8px; border-radius:5px; background: var(--surface-2); border:1px solid var(--border); color: var(--text-muted); }
+
+  /* ---------- log / timeline ---------- */
+  .log{ font-family: var(--mono); font-size: 13.5px; }
+  .log-entry{ display:grid; grid-template-columns: 90px 1fr; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .log-entry:last-child{ border-bottom:none; }
+  .log-time{ color: var(--text-faint); }
+  .log-body .role{ color: var(--text); font-family: var(--body); font-weight:600; font-size: 14.5px; }
+  .log-body .org{ color: var(--amber); font-size: 12.5px; margin: 2px 0 6px; }
+  .log-body ul{ margin: 6px 0 0; padding-left: 18px; font-family: var(--body); color: var(--text-muted); font-size: 14px; }
+  .log-body li{ margin-bottom: 4px; }
+
+  /* ---------- accomplishments ---------- */
+  .badges{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 14px; }
+  .badge{ background: var(--surface); border:1px solid var(--border); border-radius: 10px; padding: 16px 18px; font-size: 14px; color: var(--text-muted); display:flex; gap:12px; align-items:flex-start; }
+  .badge .mark{ font-family: var(--mono); color: var(--amber); flex-shrink:0; }
+
+  /* ---------- contact ---------- */
+  .contact-panel{
+    background: linear-gradient(160deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border-strong); border-radius: 14px; padding: 36px 32px;
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap: 24px; align-items:center;
+  }
+  .contact-panel h3{ font-family: var(--display); font-size: 1.4rem; margin: 0 0 8px; }
+  .contact-panel p{ color: var(--text-muted); margin:0; max-width: 40ch; font-size: 14.5px; }
+  .contact-actions{ display:flex; gap: 12px; flex-wrap: wrap; }
+  .btn{
+    font-family: var(--mono); font-size: 12.5px; text-decoration:none; padding: 11px 18px; border-radius: 8px;
+    border: 1px solid var(--border-strong); color: var(--text); display:inline-flex; align-items:center; gap:8px;
+    transition: border-color .15s, background .15s;
+  }
+  .btn:hover{ border-color: var(--amber); background: var(--amber-dim); }
+  .btn.primary{ background: var(--amber); color: #1a1408; border-color: var(--amber); font-weight:600; }
+  .btn.primary:hover{ background: #ecb75c; }
+
+  footer{ padding: 30px 0 60px; }
+  .ticker-wrap{
+    border-top: 1px solid var(--border); padding-top: 18px; overflow:hidden; white-space:nowrap; position:relative;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  }
+  .ticker{ display:inline-block; font-family: var(--mono); font-size: 11.5px; color: var(--text-faint); padding-left: 100%; animation: ticker 34s linear infinite; }
+  @keyframes ticker{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
+  .foot-meta{ font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-top: 18px; }
+
+  /* Focus outline styles for keyboard users */
+  :focus-visible {
+    outline: 2px solid var(--amber) !important;
+    outline-offset: 3px !important;
+  }
+  
+  /* Style chips to look clickable, keyboard focusable, and support active filtering */
+  .chip {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  .chip:hover {
+    color: var(--amber);
+    border-color: rgba(226,166,64,0.3);
+    background: rgba(226,166,64,0.05);
+  }
+  .chip.active-filter {
+    color: #1a1408 !important;
+    background: var(--amber) !important;
+    border-color: var(--amber) !important;
+    box-shadow: 0 0 12px rgba(226,166,64,0.3);
+  }
+  
+  /* Filter bar styles */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    margin-bottom: 0px;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .filter-bar.show {
+    height: auto;
+    margin-bottom: 20px;
+    opacity: 1;
+  }
+  .filter-status-text {
+    color: var(--text-muted);
+  }
+  .filter-status-val {
+    color: var(--amber);
+    font-weight: 500;
+  }
+  .clear-filter-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    color: var(--revoke);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    outline: none;
+  }
+  .clear-filter-btn:hover {
+    background: rgba(217,99,74,0.15);
+    border-color: var(--revoke);
+    color: #ff7e65;
+  }
+  
+  /* Dim state for projects */
+  .proc {
+    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  }
+  .proc.dimmed {
+    opacity: 0.25;
+  }
+  .proc.dimmed .proc-head {
+    cursor: default;
+  }
+  
+  /* Project ledger hover state: preview one-line summary */
+  .proc-head {
+    transition: background-color 0.2s ease;
+    outline: none;
+  }
+  .proc-head:hover {
+    background-color: rgba(238,240,244,0.02);
+  }
+  .proc-preview {
+    font-family: var(--body);
+    font-size: 13.5px;
+    color: var(--text-muted);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, max-height 0.25s ease, transform 0.25s ease, margin-top 0.25s ease;
+  }
+  .proc:not(.open):hover .proc-preview,
+  .proc:not(.open):focus-within .proc-preview {
+    opacity: 1;
+    max-height: 40px;
+    transform: translateY(0);
+    margin-top: 6px;
+  }
+  .proc-preview-text {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  
+  /* 3D card tilt reflection sheen */
+  .card-stage {
+    perspective: 1000px;
+  }
+  .cred-card {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    transform-style: preserve-3d;
+  }
+  .card-sheen {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  /* Hero scanning cursor and beam */
+  .hero {
+    position: relative;
+  }
+  .hero-cursor-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    overflow: hidden;
+  }
+  .scan-cursor {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--cyan);
+    border-radius: 4px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+  }
+  .scan-cursor::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -12px;
+    right: -12px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+  .scan-cursor::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -12px;
+    bottom: -12px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--cyan), transparent);
+  }
+  .scan-beam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(111,179,192,0.4), transparent);
+    box-shadow: 0 0 10px rgba(111,179,192,0.6);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 99;
+  }
+  .scan-trail-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 98;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px var(--cyan);
+    opacity: 0.8;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+    .boot .cursor{ display:none; }
+    .cred-card { transition: none !important; transform: none !important; }
+    .scan-cursor, .scan-beam, .scan-trail-dot { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span> SESSION://bandita — active</div>
+    <div class="navlinks">
+      <a href="#scopes">scopes</a>
+      <a href="#ledger">ledger</a>
+      <a href="#log">log</a>
+      <a href="#contact">contact</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" style="border-top:none;">
+    <div class="boot" id="boot"></div>
+    <div class="hero-grid">
+      <div>
+        <div class="role">GOVERNANCE &amp; SYSTEMS ENGINEERING</div>
+        <h1>Bandita Priyadarshini</h1>
+        <p class="lede">CS undergrad building AI agent governance, OT security frameworks, and interfaces that don't fall apart under real conditions. Standing access is a standing risk — most of what I build exists to remove it.</p>
+      </div>
+      <div class="card-stage">
+        <div class="cred-card">
+          <div class="cred-top">
+            <span>ACCESS TOKEN</span>
+            <span class="cred-status"><span class="led"></span>VERIFIED</span>
+          </div>
+          <div class="cred-name">B. Priyadarshini</div>
+          <div class="cred-role">scope: full_profile · role: builder</div>
+          <div class="barcode" id="barcode"></div>
+          <div class="cred-row"><span>issued: just now</span><span>expires: <b id="ttl">05:00</b></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCOPES -->
+  <section id="scopes">
+    <div class="eyebrow">granted scopes</div>
+    <h2 class="sec-title">What I'm cleared to build with</h2>
+    <div class="scope-groups">
+      <div class="scope-group">
+        <h3>Languages</h3>
+        <div class="chips">
+          <span class="chip on">C</span><span class="chip on">C++</span><span class="chip on">Java</span><span class="chip on">JavaScript</span><span class="chip on">SQL</span>
+        </div>
+      </div>
+      <div class="scope-group">
+        <h3>Frameworks &amp; Tools</h3>
+        <div class="chips">
+          <span class="chip">React.js</span><span class="chip">Vite</span><span class="chip">Tailwind CSS</span><span class="chip">Node.js</span><span class="chip">Express.js</span><span class="chip">WebSocket</span><span class="chip">Git</span>
+        </div>
+      </div>
+      <div class="scope-group">
+        <h3>AI &amp; Security</h3>
+        <div class="chips">
+          <span class="chip on">Generative AI</span><span class="chip on">Multi-Agent Systems</span><span class="chip on">OT Security</span><span class="chip on">Zero Standing Privilege</span>
+        </div>
+      </div>
+      <div class="scope-group">
+        <h3>Design</h3>
+        <div class="chips"><span class="chip">UI/UX Design</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEDGER / PROJECTS -->
+  <section id="ledger">
+    <div class="eyebrow">project ledger</div>
+    <h2 class="sec-title">Processes I've shipped, live and archived</h2>
+    
+    <div class="filter-bar" id="filterBar">
+      <span class="filter-status-text">Active Filter: <span class="filter-status-val" id="activeFilterName">None</span></span>
+      <button class="clear-filter-btn" id="clearFilterBtn" tabindex="0" aria-label="Clear active skill filter">
+        <span>clear filter</span> ✕
+      </button>
+    </div>
+
+    <div class="ledger" id="ledgerList">
+
+      <div class="proc" data-status="deployed" data-skills="react.js, express.js, websocket, generative ai, multi-agent systems, zero standing privilege, javascript, git">
+        <div class="proc-head">
+          <div class="proc-title">
+            <span class="name">Agent-Passport ZSP</span>
+            <span class="tag">zero standing privilege · governance middleware</span>
+          </div>
+          <span class="proc-status">deployed</span>
+          <span class="proc-chevron">▸</span>
+        </div>
+        <div class="proc-body">
+          <div class="proc-body-inner">
+            <p>Standing credentials are a standing risk — a leaked token works forever, even for agents that no longer exist. Agent-Passport ZSP replaces them with just-in-time, tool-scoped, auto-expiring access across a four-agent architecture: Governance Agent, Requestor Agent, MCP Gateway, and Tool Agents.</p>
+            <p>Anomaly detection flags SQL injection, shell injection, and destructive commands before a token is ever issued, backed by behavioral baselines and rate limiting with auto-revocation. Every action lands in a SHA-256 hash-chain ledger — tamper-proof enough to satisfy EU AI Act and GDPR audit requirements. A live dashboard gives one-click revocation across every agent in a session.</p>
+            <div class="stack-row"><span>React</span><span>Express.js</span><span>WebSocket</span><span>Docker</span><span>Hugging Face Spaces</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc" data-status="live" data-skills="generative ai, multi-agent systems, java, javascript">
+        <div class="proc-head">
+          <div class="proc-title">
+            <span class="name">KhetibadiMitra</span>
+            <span class="tag">AI-driven crop advisory system</span>
+          </div>
+          <span class="proc-status">live</span>
+          <span class="proc-chevron">▸</span>
+        </div>
+        <div class="proc-body">
+          <div class="proc-body-inner">
+            <p>Crop guidance usually arrives too late, or not in a language a farmer actually speaks. KhetibadiMitra is a multilingual advisory agent — 27+ Indian languages, voice input included — surfacing real-time crop and soil-health insight for small-scale farmers.</p>
+            <div class="stack-row"><span>Generative AI</span><span>Voice Interface</span><span>Multilingual NLP</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc" data-status="live" data-skills="react.js, vite, tailwind css, javascript">
+        <div class="proc-head">
+          <div class="proc-title">
+            <span class="name">Glassmorphic Weather Pulse</span>
+            <span class="tag">adaptive weather dashboard</span>
+          </div>
+          <span class="proc-status">live</span>
+          <span class="proc-chevron">▸</span>
+        </div>
+        <div class="proc-body">
+          <div class="proc-body-inner">
+            <p>Most weather apps look the same whether it's a heatwave or a blizzard. This one doesn't — a glassmorphic dashboard on live OpenWeatherMap data, where the theme and kinetic typography shift with actual local conditions.</p>
+            <div class="stack-row"><span>React</span><span>Vite</span><span>Tailwind CSS</span><span>OpenWeatherMap API</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc" data-status="research" data-skills="ot security, c, c++, sql">
+        <div class="proc-head">
+          <div class="proc-title">
+            <span class="name">Anomaly Architects</span>
+            <span class="tag">OT security for grid substations</span>
+          </div>
+          <span class="proc-status">research</span>
+          <span class="proc-chevron">▸</span>
+        </div>
+        <div class="proc-body">
+          <div class="proc-body-inner">
+            <p>A power grid substation doesn't get to "restart and see if it fixes itself." This project frames a detection approach for False Data Injection and Replay Attacks against operational technology — catching a compromised sensor before it teaches the grid the wrong reality.</p>
+            <div class="stack-row"><span>OT Security</span><span>Signal Analysis</span><span>Critical Infrastructure</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc" data-status="shipped" data-skills="react.js, vite, tailwind css, javascript, ui/ux design">
+        <div class="proc-head">
+          <div class="proc-title">
+            <span class="name">Personal Portfolio (v1)</span>
+            <span class="tag">interactive front-end study</span>
+          </div>
+          <span class="proc-status">shipped</span>
+          <span class="proc-chevron">▸</span>
+        </div>
+        <div class="proc-body">
+          <div class="proc-body-inner">
+            <p>An earlier pass at this exact problem: a mouse-reactive hexagon grid and radial gradient masking, built to prove a point about front-end craft before this version replaced it.</p>
+            <div class="stack-row"><span>React</span><span>Vite</span><span>Tailwind CSS</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LOG: education / experience / certs -->
+  <section id="log">
+    <div class="eyebrow">activity log</div>
+    <h2 class="sec-title">Education, experience &amp; certification</h2>
+    <div class="log">
+      <div class="log-entry">
+        <div class="log-time">2026</div>
+        <div class="log-body">
+          <div class="role">Google &amp; Kaggle 5-Day Generative AI Intensive</div>
+          <div class="org">Capstone: Agent-Passport ZSP</div>
+          <ul>
+            <li>Hands-on program covering generative AI fundamentals, prompt engineering, and multi-agent system design.</li>
+            <li>Designed the four-agent governance architecture and hash-chain audit ledger described above.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">ongoing</div>
+        <div class="log-body">
+          <div class="role">Technical Team Member</div>
+          <div class="org">SheCodesAI</div>
+          <ul>
+            <li>Collaborated cross-functionally on AI solutions and technical documentation.</li>
+            <li>Led front-end architecture and UI/UX refinement across group projects.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">2026</div>
+        <div class="log-body">
+          <div class="role">Participant, Smart India Hackathon</div>
+          <div class="org">Cleared institutional round, OUTR</div>
+          <ul>
+            <li>Built a functional prototype under strict deadlines in a cross-functional team.</li>
+            <li>Bridged back-end logic and user-facing design.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">B.Tech</div>
+        <div class="log-body">
+          <div class="role">Computer Science &amp; Engineering</div>
+          <div class="org">Odisha University of Technology and Research (OUTR)</div>
+          <ul>
+            <li>Coursework: DBMS, Computer Architecture &amp; Organization, Data Structures &amp; Algorithms, OOP (Java/C++).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCOMPLISHMENTS -->
+  <section>
+    <div class="eyebrow">flagged accomplishments</div>
+    <h2 class="sec-title">Notable entries</h2>
+    <div class="badges">
+      <div class="badge"><span class="mark">✓</span>Institutional Winner, Academic Excellence Award</div>
+      <div class="badge"><span class="mark">✓</span>Cleared the institutional round of Smart India Hackathon at OUTR</div>
+      <div class="badge"><span class="mark">✓</span>Built a system breaking language barriers across tech-dry rural sectors</div>
+      <div class="badge"><span class="mark">✓</span>Maintained high standing in core engineering subjects, Spring 2026</div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="eyebrow">request access</div>
+    <div class="contact-panel">
+      <div>
+        <h3>Want to work together?</h3>
+        <p>Reach out directly — no token required for this one.</p>
+      </div>
+      <div class="contact-actions">
+        <a class="btn primary" href="mailto:bandita28288sony@gmail.com">↳ email me</a>
+        <a class="btn" href="tel:+916371299980">+91 6371299980</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="ticker-wrap">
+      <div class="ticker" id="ticker"></div>
+    </div>
+    <div class="foot-meta">Bhubaneswar, Odisha · built by hand, not by template</div>
+  </footer>
+
+</div>
+
+<script>
+  // boot sequence typing effect
+  (function(){
+    const el = document.getElementById('boot');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lines = [
+      '> initiating session...',
+      '> verifying identity... OK',
+      '> scope requested: full_profile',
+      '> access granted — welcome.'
+    ];
+    if (reduce) { el.textContent = lines.join('  '); return; }
+    let li = 0, ci = 0;
+    function type(){
+      if (li >= lines.length){ el.innerHTML = lines.join('<br>'); return; }
+      const current = lines.slice(0, li).join('<br>') + (li>0?'<br>':'') + lines[li].slice(0, ci) + '<span class="cursor"></span>';
+      el.innerHTML = current;
+      ci++;
+      if (ci > lines[li].length){ li++; ci = 0; setTimeout(type, 220); }
+      else setTimeout(type, 16);
+    }
+    type();
+  })();
+
+  // barcode
+  (function(){
+    const bc = document.getElementById('barcode');
+    let html = '';
+    for (let i=0;i<28;i++){
+      const w = [2,3,4,6][Math.floor(Math.random()*4)];
+      html += `<span style="width:${w}px"></span>`;
+    }
+    bc.innerHTML = html;
+  })();
+
+  // TTL countdown, resets
+  (function(){
+    const ttlEl = document.getElementById('ttl');
+    let seconds = 300;
+    function fmt(s){
+      const m = Math.floor(s/60), r = s%60;
+      return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+    }
+    setInterval(()=>{
+      seconds--;
+      if (seconds < 0) seconds = 300;
+      ttlEl.textContent = fmt(seconds);
+    }, 1000);
+  })();
+
+  // accordion with keyboard accessibility support
+  document.querySelectorAll('.proc-head').forEach(head=>{
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('role', 'button');
+    head.setAttribute('aria-expanded', 'false');
+
+    const toggleAccordion = () => {
+      const proc = head.parentElement;
+      if (proc.classList.contains('dimmed')) return; // ignore if filtered out
+
+      const body = proc.querySelector('.proc-body');
+      const isOpen = proc.classList.contains('open');
+      
+      document.querySelectorAll('.proc').forEach(p=>{
+        p.classList.remove('open');
+        p.querySelector('.proc-body').style.maxHeight = null;
+        p.querySelector('.proc-head').setAttribute('aria-expanded', 'false');
+      });
+      
+      if (!isOpen){
+        proc.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 40 + 'px';
+        head.setAttribute('aria-expanded', 'true');
+      }
+    };
+
+    head.addEventListener('click', toggleAccordion);
+    head.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleAccordion();
+      }
+    });
+  });
+
+  // ticker content
+  (function(){
+    const t = document.getElementById('ticker');
+    const entries = [
+      'agent_session#4471 — token issued — scope: tool.weatherpulse — ttl 300s',
+      'audit_ledger — hash chain verified — 0 anomalies detected',
+      'requestor_agent — access renewed — governance_agent approved',
+      'anomaly_detector — baseline nominal — no destructive commands observed',
+      'mcp_gateway — 3 tool agents active — rate limit ok'
+    ];
+    t.textContent = entries.join('   ·   ');
+  })();
+
+  // 3D Card Tilt & Sheen reflection effect
+  (function(){
+    const card = document.querySelector('.cred-card');
+    if (!card) return;
+    
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    
+    const sheen = document.createElement('div');
+    sheen.className = 'card-sheen';
+    card.appendChild(sheen);
+    
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const xc = rect.width / 2;
+      const yc = rect.height / 2;
+      
+      // Dynamic tilt: rotateX max 10deg, rotateY max 12deg
+      const rotateX = -(y - yc) / (rect.height / 2) * 10;
+      const rotateY = (x - xc) / (rect.width / 2) * 12;
+      
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+      
+      // Update reflection sheen position
+      const px = (x / rect.width) * 100;
+      const py = (y / rect.height) * 100;
+      sheen.style.background = `radial-gradient(circle 130px at ${px}% ${py}%, rgba(255, 255, 255, 0.14), transparent 80%)`;
+      sheen.style.opacity = '1';
+      
+      // Responsive dynamic card shadow
+      const shadowX = -(x - xc) / 6;
+      const shadowY = -(y - yc) / 6;
+      card.style.boxShadow = `${shadowX}px ${shadowY}px 40px -10px rgba(0,0,0,0.7), 0 30px 60px -30px rgba(0,0,0,0.6)`;
+    });
+
+    card.addEventListener('mousedown', () => {
+      // squash card slightly on mouse down
+      const transformStr = card.style.transform;
+      if (transformStr) {
+        card.style.transform = transformStr.replace('scale3d(1.015, 1.015, 1.015)', 'scale3d(0.98, 0.98, 0.98)');
+      }
+    });
+
+    card.addEventListener('mouseup', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const xc = rect.width / 2;
+      const yc = rect.height / 2;
+      const rotateX = -(y - yc) / (rect.height / 2) * 10;
+      const rotateY = (x - xc) / (rect.width / 2) * 12;
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      // Smooth reset transition
+      card.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      card.style.boxShadow = '';
+      sheen.style.opacity = '0';
+      sheen.style.transition = 'opacity 0.6s ease, background 0.6s ease';
+      card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    });
+    
+    card.addEventListener('mouseenter', () => {
+      sheen.style.transition = 'none';
+      card.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
+    });
+  })();
+
+  // Hero Scanning Cursor & Trail Effect
+  (function(){
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    
+    const container = document.createElement('div');
+    container.className = 'hero-cursor-container';
+    
+    const cursor = document.createElement('div');
+    cursor.className = 'scan-cursor';
+    
+    const beam = document.createElement('div');
+    beam.className = 'scan-beam';
+    
+    container.appendChild(cursor);
+    container.appendChild(beam);
+    hero.appendChild(container);
+    
+    // Hide standard cursor in hero for pointing devices
+    const style = document.createElement('style');
+    style.textContent = `
+      @media (hover: hover) and (pointer: fine) {
+        .hero { cursor: none !important; }
+        .hero * { cursor: none !important; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    let active = false;
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+    
+    // Trail handling
+    const maxTrail = 8;
+    const trailDots = [];
+    for (let i = 0; i < maxTrail; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'scan-trail-dot';
+      dot.style.opacity = (1 - (i / maxTrail)) * 0.6;
+      const size = 6 * (1 - (i / maxTrail));
+      dot.style.width = size + 'px';
+      dot.style.height = size + 'px';
+      container.appendChild(dot);
+      trailDots.push({ el: dot, x: 0, y: 0 });
+    }
+    
+    hero.addEventListener('mouseenter', () => {
+      active = true;
+      cursor.style.opacity = '1';
+      beam.style.opacity = '1';
+      trailDots.forEach(d => d.el.style.opacity = '');
+    });
+    
+    hero.addEventListener('mouseleave', () => {
+      active = false;
+      cursor.style.opacity = '0';
+      beam.style.opacity = '0';
+      trailDots.forEach(d => d.el.style.opacity = '0');
+    });
+    
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      targetX = e.clientX - rect.left;
+      targetY = e.clientY - rect.top;
+    });
+    
+    function animate() {
+      if (active) {
+        currentX += (targetX - currentX) * 0.25;
+        currentY += (targetY - currentY) * 0.25;
+        
+        cursor.style.left = currentX + 'px';
+        cursor.style.top = currentY + 'px';
+        beam.style.top = currentY + 'px';
+        
+        let prevX = currentX;
+        let prevY = currentY;
+        for (let i = 0; i < maxTrail; i++) {
+          const dot = trailDots[i];
+          dot.x += (prevX - dot.x) * 0.45;
+          dot.y += (prevY - dot.y) * 0.45;
+          dot.el.style.left = dot.x + 'px';
+          dot.el.style.top = dot.y + 'px';
+          prevX = dot.x;
+          prevY = dot.y;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  })();
+
+  // Dynamically extract first sentence for ledger row hover previews
+  (function(){
+    document.querySelectorAll('.proc').forEach(proc => {
+      const titleEl = proc.querySelector('.proc-title');
+      const bodyEl = proc.querySelector('.proc-body-inner');
+      if (!titleEl || !bodyEl) return;
+      
+      const firstPara = bodyEl.querySelector('p');
+      if (!firstPara) return;
+      
+      const text = firstPara.textContent.trim();
+      let firstSentence = text.split(/[.!?]/)[0] + '.';
+      if (firstSentence.length < 10) {
+        firstSentence = text.substring(0, 60) + '...';
+      }
+      
+      const preview = document.createElement('div');
+      preview.className = 'proc-preview';
+      
+      const previewText = document.createElement('span');
+      previewText.className = 'proc-preview-text';
+      previewText.textContent = firstSentence;
+      
+      preview.appendChild(previewText);
+      titleEl.appendChild(preview);
+    });
+  })();
+
+  // Clickable scope chips and project filtering
+  (function(){
+    const chips = document.querySelectorAll('.chip');
+    const projects = document.querySelectorAll('.proc');
+    const filterBar = document.getElementById('filterBar');
+    const filterVal = document.getElementById('activeFilterName');
+    const clearBtn = document.getElementById('clearFilterBtn');
+    
+    let activeFilter = null;
+    
+    function normalizeSkill(skill) {
+      return skill.toLowerCase().trim();
+    }
+    
+    function applyFilter(skillText) {
+      activeFilter = skillText;
+      const normalized = normalizeSkill(skillText);
+      
+      chips.forEach(c => {
+        if (c.textContent.trim() === skillText) {
+          c.classList.add('active-filter');
+          c.setAttribute('aria-pressed', 'true');
+        } else {
+          c.classList.remove('active-filter');
+          c.setAttribute('aria-pressed', 'false');
+        }
+      });
+      
+      projects.forEach(p => {
+        const skillsAttr = p.getAttribute('data-skills') || '';
+        const skillsList = skillsAttr.split(',').map(s => s.trim());
+        
+        if (skillsList.includes(normalized)) {
+          p.classList.remove('dimmed');
+        } else {
+          p.classList.add('dimmed');
+          // Close accordion if it was open
+          if (p.classList.contains('open')) {
+            p.classList.remove('open');
+            p.querySelector('.proc-body').style.maxHeight = null;
+            p.querySelector('.proc-head').setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+      
+      if (filterBar && filterVal) {
+        filterVal.textContent = skillText;
+        filterBar.classList.add('show');
+      }
+    }
+    
+    function clearFilter() {
+      activeFilter = null;
+      
+      chips.forEach(c => {
+        c.classList.remove('active-filter');
+        c.setAttribute('aria-pressed', 'false');
+      });
+      
+      projects.forEach(p => {
+        p.classList.remove('dimmed');
+      });
+      
+      if (filterBar) {
+        filterBar.classList.remove('show');
+      }
+    }
+    
+    chips.forEach(chip => {
+      chip.setAttribute('tabindex', '0');
+      chip.setAttribute('role', 'button');
+      chip.setAttribute('aria-pressed', 'false');
+      
+      const toggleAction = () => {
+        const text = chip.textContent.trim();
+        if (activeFilter === text) {
+          clearFilter();
+        } else {
+          applyFilter(text);
+        }
+      };
+      
+      chip.addEventListener('click', toggleAction);
+      chip.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleAction();
+        }
+      });
+    });
+    
+    if (clearBtn) {
+      clearBtn.addEventListener('click', clearFilter);
+      clearBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          clearFilter();
+        }
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
