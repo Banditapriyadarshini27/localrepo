@@ -26,6 +26,7 @@
     --cyan: #A26D91;
     --cyan-dim: rgba(162, 109, 145, 0.12);
     --card-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.5);
+    --btn-shadow-hover: rgba(198, 139, 93, 0.25);
     
     /* Code editor window token colors (Dark theme) */
     --code-bg: #150E17;
@@ -51,6 +52,7 @@
     --cyan: #6B3F5C;
     --cyan-dim: rgba(107, 63, 92, 0.08);
     --card-shadow: 0 10px 30px -10px rgba(28, 22, 32, 0.05), 0 1px 3px rgba(28, 22, 32, 0.01);
+    --btn-shadow-hover: rgba(152, 85, 45, 0.25);
     
     /* Code editor window token colors (Light theme) */
     --code-bg: #F1EAE1;
@@ -65,8 +67,8 @@
   html { scroll-behavior: smooth; }
 
   /* Crossfade transition rule */
-  body, header, section, .btn, .social-icon, .code-window, .code-header, .code-content, .skill-group, .chip, .project-row, .project-visual, .timeline-item, .about-card, .badge, .contact-panel, footer {
-    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.2s ease;
+  body, .header, section, .btn, .social-icon, .code-window, .code-header, .code-content, .skill-group, .chip, .project-row, .project-visual, .timeline-item, .about-card, .badge, .contact-panel, footer, .project-status-marker, svg, circle, path, line, polygon {
+    transition: background-color 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease), stroke 0.35s var(--ease), fill 0.35s var(--ease), box-shadow 0.35s var(--ease), transform 0.3s var(--ease);
   }
 
   /* Global Typographic scale settings */
@@ -74,6 +76,7 @@
     --display: 'Space Grotesk', sans-serif;
     --body: 'Inter', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   body {
@@ -240,15 +243,15 @@
   }
   .navlinks { display: flex; gap: 28px; font-family: var(--mono); font-size: 13px; }
   .navlinks a {
-    color: var(--text-muted); transition: color 0.2s;
+    color: var(--text-muted); transition: color 0.3s var(--ease);
     position: relative;
     padding: 4px 0;
   }
   .navlinks a:hover { color: var(--indigo); }
   .navlinks a::after {
-    content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+    content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1.5px;
     background: var(--indigo); transform: scaleX(0); transform-origin: right;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s var(--ease);
   }
   .navlinks a:hover::after {
     transform: scaleX(1); transform-origin: left;
@@ -361,24 +364,27 @@
     padding: 12px 24px; border-radius: 8px;
     border: 1px solid var(--border-strong); color: var(--text);
     background: transparent; display: inline-flex; align-items: center; gap: 8px;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
   }
   .btn:hover {
     border-color: var(--indigo);
     background: var(--indigo-dim);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
   .btn.primary {
     background: var(--surface-2); color: var(--text); border-color: var(--border-strong);
     font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
   body.light-mode .btn.primary {
     background: #0f172a; color: #ffffff; border-color: #0f172a;
   }
   .btn.primary:hover {
     background: var(--indigo) !important; border-color: var(--indigo) !important; color: #090d16 !important;
-    box-shadow: 0 8px 24px -6px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 8px 24px var(--btn-shadow-hover);
   }
   body.light-mode .btn.primary:hover { color: #ffffff !important; }
   
@@ -386,11 +392,12 @@
   .social-icon {
     width: 42px; height: 42px; border-radius: 8px;
     border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); transition: all 0.2s ease;
+    color: var(--text-muted); transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
   }
   .social-icon:hover {
     color: var(--indigo); border-color: var(--indigo);
-    background: var(--indigo-dim); transform: translateY(-1px);
+    background: var(--indigo-dim); transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   /* Code Editor Visual Card */
@@ -474,13 +481,14 @@
   .chip {
     font-family: var(--mono); font-size: 12px; padding: 6px 12px;
     border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border);
-    color: var(--text-muted); transition: all 0.2s ease;
+    color: var(--text-muted); transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease);
     user-select: none;
     outline: none;
   }
   .chip:hover {
-    color: var(--indigo); border-color: rgba(99, 102, 241, 0.35);
+    color: var(--indigo); border-color: var(--indigo);
     background: var(--indigo-dim);
+    transform: translateY(-2px);
   }
 
   /* ---------- Projects Section ---------- */
@@ -803,19 +811,120 @@
   .reveal-el {
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
   }
   .reveal-el.revealed {
     opacity: 1;
     transform: translateY(0);
   }
 
+  .reveal-child {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+  }
+  .revealed .reveal-child {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Page load fade-in animations */
+  .fade-in-load {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeInLoad 0.6s var(--ease) forwards;
+  }
+  
+  @keyframes fadeInLoad {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Initial state before load */
+  .header, 
+  .hero-left .tagline, 
+  .hero-left h1, 
+  .hero-left .role, 
+  .hero-left p.lede, 
+  .hero-left .currently-exploring, 
+  .hero-actions, 
+  .hero-right {
+    opacity: 0;
+  }
+  
+  /* Stagger delays on page load (triggered by body.loaded) */
+  body.loaded .header {
+    animation: fadeInLoad 0.6s var(--ease) forwards;
+    animation-delay: 0.1s;
+  }
+  body.loaded .hero-left .tagline,
+  body.loaded .hero-left h1 {
+    animation: fadeInLoad 0.6s var(--ease) forwards;
+    animation-delay: 0.2s;
+  }
+  body.loaded .hero-left .role,
+  body.loaded .hero-left p.lede,
+  body.loaded .hero-left .currently-exploring {
+    animation: fadeInLoad 0.6s var(--ease) forwards;
+    animation-delay: 0.3s;
+  }
+  body.loaded .hero-actions {
+    animation: fadeInLoad 0.6s var(--ease) forwards;
+    animation-delay: 0.4s;
+  }
+  body.loaded .hero-right {
+    animation: fadeInLoad 0.6s var(--ease) forwards;
+    animation-delay: 0.5s;
+  }
+
+  /* Project Row Hover Effects */
+  .project-visual {
+    transition: border-color 0.3s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .project-row:hover .project-visual {
+    border-color: var(--indigo);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Ambient floats and pulses */
+  .project-visual svg {
+    animation: ambientFloat 8s ease-in-out infinite;
+  }
+  @keyframes ambientFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-3px) rotate(0.5deg); }
+  }
+  
+  .hero-hex-grid {
+    animation: hexPulse 10s ease-in-out infinite;
+  }
+  @keyframes hexPulse {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.22; }
+  }
+  body.light-mode .hero-hex-grid {
+    animation: hexPulseLight 10s ease-in-out infinite;
+  }
+  @keyframes hexPulseLight {
+    0%, 100% { opacity: 0.08; }
+    50% { opacity: 0.14; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
-    .code-window { transform: none !important; transition: none !important; }
-    .project-card:hover, .project-row:hover { transform: none !important; }
+    .header, .hero-left .tagline, .hero-left h1, .hero-left .role, .hero-left p.lede, .hero-left .currently-exploring, .hero-actions, .hero-right {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .code-window { transform: none !important; }
+    .project-row:hover .project-visual { transform: none !important; box-shadow: none !important; border-color: var(--border-strong) !important; }
+    .btn:hover { transform: none !important; box-shadow: none !important; }
+    .chip:hover { transform: none !important; }
     .hero-hex-grid { display: none !important; }
-    .reveal-el { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .reveal-el, .reveal-child { opacity: 1 !important; transform: none !important; }
     #loadingScreen { display: none !important; }
   }
 </style>
@@ -1301,39 +1410,35 @@
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     const lines = [
-      { text: '$ npm run build:portfolio', delayAfter: 300 },
-      { text: '> compiling bandita.dev... done', delayAfter: 250 },
-      { text: '> checking constraints... done', delayAfter: 300 },
-      { text: '> warning: ClassCastException: expected "senior engineer", found "3rd-year CSE student"', delayAfter: 500, class: 'warning-line' },
-      { text: '> hot-fixing... patch applied: ambition += curiosity', delayAfter: 400, class: 'patch-line' },
-      { text: '> compilation successful. launching...', delayAfter: 200 }
+      { text: '> warning: ClassCastException: expected "senior engineer", found "3rd-year CSE student"', delayAfter: 80, class: 'warning-line' },
+      { text: '> hot-fixing... patch applied: ambition += curiosity', delayAfter: 80, class: 'patch-line' },
+      { text: '> compilation successful. launching...', delayAfter: 50 }
     ];
     
     let isDismissed = false;
     
-    function dismiss() {
+    function dismiss(instant = false) {
       if (isDismissed) return;
       isDismissed = true;
-      overlay.style.opacity = '0';
-      overlay.style.visibility = 'hidden';
-      setTimeout(() => {
+      document.body.classList.add('loaded'); // Trigger page load animations
+      if (instant || reduce) {
         overlay.remove();
-      }, 400);
+      } else {
+        overlay.style.opacity = '0';
+        overlay.style.visibility = 'hidden';
+        setTimeout(() => {
+          overlay.remove();
+        }, 400);
+      }
     }
     
     // Listen for skip inputs
-    window.addEventListener('keydown', dismiss);
-    overlay.addEventListener('click', dismiss);
+    window.addEventListener('keydown', () => dismiss(false));
+    overlay.addEventListener('click', () => dismiss(false));
     
     if (reduce) {
-      // If prefers-reduced-motion, show all immediately and dismiss after 600ms
-      lines.forEach(line => {
-        const p = document.createElement('p');
-        p.className = 'log-line' + (line.class ? ' ' + line.class : '');
-        p.textContent = line.text;
-        body.appendChild(p);
-      });
-      setTimeout(dismiss, 600);
+      // Under prefers-reduced-motion, skip straight to the resolved state
+      dismiss(true);
       return;
     }
     
@@ -1342,7 +1447,7 @@
     function typeLine() {
       if (isDismissed) return;
       if (currentLineIndex >= lines.length) {
-        setTimeout(dismiss, 400);
+        setTimeout(() => dismiss(false), 200);
         return;
       }
       
@@ -1363,8 +1468,8 @@
         if (charIndex < text.length) {
           cursor.before(text.charAt(charIndex));
           charIndex++;
-          // Typing speed 20-30ms per character
-          setTimeout(typeChar, 25);
+          // Typing speed 8ms per character
+          setTimeout(typeChar, 8);
         } else {
           cursor.remove();
           currentLineIndex++;
@@ -1576,13 +1681,54 @@
     });
   })();
 
-  // Subtle scroll reveals using IntersectionObserver
+  // Subtle scroll reveals and cascading staggers using IntersectionObserver
   (function(){
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return; // Exit if user prefers reduced motion
     
-    const revealElements = document.querySelectorAll('section, .project-row');
-    revealElements.forEach(el => el.classList.add('reveal-el'));
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      section.classList.add('reveal-el');
+      
+      // Select containers that should have staggered children
+      const containers = section.querySelectorAll('.skills-grid, .chips, .projects-list, .timeline, .badges, .about-grid');
+      containers.forEach(container => {
+        const children = container.children;
+        Array.from(children).forEach((child, index) => {
+          child.classList.add('reveal-child');
+          child.style.transitionDelay = `${index * 80}ms`;
+        });
+      });
+      
+      // Stagger paragraphs inside about-left
+      const aboutLeft = section.querySelector('.about-left');
+      if (aboutLeft) {
+        const paragraphs = aboutLeft.querySelectorAll('p');
+        paragraphs.forEach((p, index) => {
+          p.classList.add('reveal-child');
+          p.style.transitionDelay = `${index * 80}ms`;
+        });
+      }
+      
+      // Stagger stats inside about card
+      const statsContainer = section.querySelector('.about-card');
+      if (statsContainer) {
+        const stats = statsContainer.querySelectorAll('.about-card-stat');
+        stats.forEach((stat, index) => {
+          stat.classList.add('reveal-child');
+          stat.style.transitionDelay = `${(index + 1) * 80}ms`;
+        });
+      }
+      
+      // Stagger contact panel elements
+      const contactPanel = section.querySelector('.contact-panel');
+      if (contactPanel) {
+        Array.from(contactPanel.children).forEach((child, index) => {
+          child.classList.add('reveal-child');
+          child.style.transitionDelay = `${index * 80}ms`;
+        });
+      }
+    });
     
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -1596,7 +1742,7 @@
       rootMargin: '0px 0px -40px 0px'
     });
     
-    revealElements.forEach(el => observer.observe(el));
+    sections.forEach(el => observer.observe(el));
   })();
 
   // Tasteful 3D Card Tilt & Sheen reflection effect on Code Mockup Window
