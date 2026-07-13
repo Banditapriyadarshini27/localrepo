@@ -1,0 +1,178 @@
+<!-- PROJECTS SECTION -->
+<section id="projects">
+  <span class="section-tag">projects</span>
+  <h2 class="section-title">Featured Applications &amp; Research</h2>
+  
+  <!-- segment control projects status filter -->
+  <div class="project-filter-bar">
+    <button class="filter-btn active" data-filter="all" tabindex="0">All Projects</button>
+    <button class="filter-btn" data-filter="live" tabindex="0">Live</button>
+    <button class="filter-btn" data-filter="research" tabindex="0">Research</button>
+  </div>
+
+  <div class="projects-list">
+
+    <!-- Project 1 -->
+    <div class="project-row" data-status="live">
+      <div class="project-visual" aria-hidden="true">
+        <!-- Abstract SVG representation of Node/Network theme -->
+        <svg viewBox="0 0 200 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="max-height: 180px;">
+          <path d="M40,60 L100,25 L160,60 L100,95 Z" stroke="var(--indigo)" stroke-width="1" stroke-dasharray="3,3" fill="none" opacity="0.4"/>
+          <line x1="40" y1="60" x2="160" y2="60" stroke="var(--indigo)" stroke-width="1" opacity="0.2"/>
+          <line x1="100" y1="25" x2="100" y2="95" stroke="var(--indigo)" stroke-width="1" opacity="0.2"/>
+          <circle cx="100" cy="25" r="6" fill="var(--bg)" stroke="var(--indigo)" stroke-width="2"/>
+          <circle cx="40" cy="60" r="6" fill="var(--bg)" stroke="var(--indigo)" stroke-width="2"/>
+          <circle cx="160" cy="60" r="6" fill="var(--bg)" stroke="var(--indigo)" stroke-width="2"/>
+          <circle cx="100" cy="95" r="6" fill="var(--bg)" stroke="var(--indigo)" stroke-width="2"/>
+          <circle cx="100" cy="25" r="12" fill="none" stroke="var(--indigo)" stroke-width="1" opacity="0.15"/>
+          <circle cx="40" cy="60" r="12" fill="none" stroke="var(--indigo)" stroke-width="1" opacity="0.15"/>
+          <circle cx="160" cy="60" r="12" fill="none" stroke="var(--indigo)" stroke-width="1" opacity="0.15"/>
+          <circle cx="100" cy="95" r="12" fill="none" stroke="var(--indigo)" stroke-width="1" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-header">
+          <h3 class="project-name">Agent-Passport ZSP</h3>
+          <div class="project-status-marker" data-status="live">
+            <span class="status-dot"></span>
+            <span class="status-label">live</span>
+          </div>
+        </div>
+        <span class="project-tagline">API Middleware &amp; Governance</span>
+        <p class="project-desc">
+          A secure multi-agent authorization framework that eliminates long-lived credentials in favor of dynamic, auto-expiring access tokens. 
+          Integrates anomaly detection to intercept malicious SQL or shell commands before token issuance, logging events in a SHA-256 hash-chain audit ledger.
+        </p>
+        
+        <!-- Labeled dynamic Case Study toggle -->
+        <div class="case-study-toggle-wrapper">
+          <button class="case-study-btn" aria-expanded="false" onclick="toggleCaseStudy(this)" tabindex="0">
+            View Case Study <span class="chevron">▼</span>
+          </button>
+          <div class="case-study-content">
+            <div class="case-study-inner">
+              <div class="cs-field">
+                <span class="cs-label">Problem</span>
+                <span class="cs-val">Static credentials introduce a persistent attack vector; automated agent tasks lack tool-scoped boundaries.</span>
+              </div>
+              <div class="cs-field">
+                <span class="cs-label">Tradeoffs</span>
+                <span class="cs-val">OAuth2 flows are too high-latency for multi-agent local environments. Dynamic, tool-scoped dynamic tokens are lighter and faster.</span>
+              </div>
+              <div class="cs-field">
+                <span class="cs-label">Approach</span>
+                <span class="cs-val">Constructed a proxy gateway that screens inputs for injection markers and commits hashes to a chain ledger.</span>
+              </div>
+              <div class="cs-field">
+                <span class="cs-label">Result</span>
+                <span class="cs-val">Dynamic auto-expiring credentials implemented with zero overhead in agent tool execution.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stack-row">
+          <span>React</span><span>Express.js</span><span>WebSocket</span><span>Docker</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-row" data-status="live">
+      <div class="project-visual" aria-hidden="true">
+        <!-- Abstract SVG representation of Globe/Language theme -->
+        <svg viewBox="0 0 200 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="max-height: 180px;">
+          <circle cx="100" cy="60" r="32" stroke="var(--indigo)" stroke-width="1" fill="none" opacity="0.2"/>
+          <ellipse cx="100" cy="60" rx="32" ry="10" stroke="var(--indigo)" stroke-width="1" fill="none" opacity="0.3"/>
+          <ellipse cx="100" cy="60" rx="14" ry="32" stroke="var(--indigo)" stroke-width="1" fill="none" opacity="0.3"/>
+          <path d="M120,40 L150,40 A4,4 0 0,1 154,44 L154,64 A4,4 0 0,1 150,68 L135,68 L126,77 L126,68 A4,4 0 0,1 120,64 Z" fill="var(--surface-2)" stroke="var(--indigo)" stroke-width="1.5"/>
+          <line x1="128" y1="49" x2="146" y2="49" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="128" y1="57" x2="139" y2="57" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-header">
+          <h3 class="project-name">KhetibadiMitra</h3>
+          <div class="project-status-marker" data-status="live">
+            <span class="status-dot"></span>
+            <span class="status-label">live</span>
+          </div>
+        </div>
+        <span class="project-tagline">Generative AI NLP</span>
+        <p class="project-desc">
+          A voice-first agricultural advisory system supporting over 27 Indian languages. 
+          Allows rural farmers to input speech requests and receive instant, soil-health and crop recommendations driven by fine-tuned generative LLM queries.
+        </p>
+        <div class="stack-row">
+          <span>Generative AI</span><span>Voice NLP</span><span>Speech Recognition</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project-row" data-status="live">
+      <div class="project-visual" aria-hidden="true">
+        <!-- Abstract SVG representation of Weather/Gradient theme -->
+        <svg viewBox="0 0 200 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="max-height: 180px;">
+          <circle cx="85" cy="50" r="20" fill="none" stroke="var(--indigo)" stroke-width="1.5"/>
+          <circle cx="85" cy="50" r="14" fill="none" stroke="var(--indigo)" stroke-width="1" opacity="0.2"/>
+          <line x1="85" y1="20" x2="85" y2="25" stroke="var(--indigo)" stroke-width="1.5"/>
+          <line x1="85" y1="75" x2="85" y2="80" stroke="var(--indigo)" stroke-width="1.5"/>
+          <line x1="55" y1="50" x2="60" y2="50" stroke="var(--indigo)" stroke-width="1.5"/>
+          <line x1="110" y1="50" x2="115" y2="50" stroke="var(--indigo)" stroke-width="1.5"/>
+          <path d="M100,70 L135,70 A12,12 0 0,0 135,46 A15,15 0 0,0 109,42 A14,14 0 0,0 96,56 A12,12 0 0,0 100,70 Z" fill="var(--surface-2)" stroke="var(--indigo)" stroke-width="1.5" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-header">
+          <h3 class="project-name">Weather Pulse</h3>
+          <div class="project-status-marker" data-status="live">
+            <span class="status-dot"></span>
+            <span class="status-label">live</span>
+          </div>
+        </div>
+        <span class="project-tagline">Front-End Engineering</span>
+        <p class="project-desc">
+          A live-updating glassmorphic weather platform that adapts its color schemes and typography dynamic values based on local API conditions. 
+          Focuses on rich user interfaces, custom transitions, and performant API fetching.
+        </p>
+        <div class="stack-row">
+          <span>React</span><span>Vite</span><span>Tailwind CSS</span><span>OpenWeatherMap API</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 4 -->
+    <div class="project-row" data-status="research">
+      <div class="project-visual" aria-hidden="true">
+        <!-- Abstract SVG representation of Signal/Waveform theme -->
+        <svg viewBox="0 0 200 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="max-height: 180px;">
+          <line x1="30" y1="60" x2="170" y2="60" stroke="var(--border-strong)" stroke-width="1"/>
+          <line x1="30" y1="30" x2="170" y2="30" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="30" y1="90" x2="170" y2="90" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,4"/>
+          <path d="M30,60 Q50,30 70,60 T110,60 L120,20 L130,100 L140,60 T170,60" fill="none" stroke="var(--indigo)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="125" cy="60" r="14" fill="none" stroke="var(--indigo)" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+          <circle cx="125" cy="60" r="4" fill="var(--indigo)"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-header">
+          <h3 class="project-name">Substation Anomaly Detector</h3>
+          <div class="project-status-marker" data-status="research">
+            <span class="status-dot"></span>
+            <span class="status-label">research</span>
+          </div>
+        </div>
+        <span class="project-tagline">OT Security Research</span>
+        <p class="project-desc">
+          Research into preventing False Data Injection and Replay Attacks in power grid substations. 
+          Analyzed industrial Control System operational technology signals to map out security validation rules for physical sensor safety.
+        </p>
+        <div class="stack-row">
+          <span>OT Security</span><span>C++</span><span>Signal Analysis</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
