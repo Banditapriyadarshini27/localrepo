@@ -1,46 +1,55 @@
-# Bandita Priyadarshini — Software Developer Portfolio
+# Bandita Priyadarshini — Full-Stack Portfolio
 
-A responsive, highly polished software developer portfolio website.
-
-## 🚀 How to Run Locally
-
-Due to modern browser security restrictions (CORS), you cannot run this website by simply double-clicking the `index.html` file in your file explorer. Browsers block dynamic requests (`fetch()`) when pages are loaded via the `file://` protocol.
-
-To preview and interact with the site, you need to serve it using a local web server:
-
-### Option A: Using Python (Recommended)
-If you have Python installed, open your terminal/command prompt in this project directory and run:
-```bash
-python -m http.server 8000
-```
-Then, open your web browser and navigate to:
-**[http://localhost:8000](http://localhost:8000)**
-
-### Option B: Using Node.js / npx
-If you have Node.js installed, open your terminal in this project directory and run:
-```bash
-npx serve .
-```
-Then, navigate to the local address displayed in your terminal (usually **[http://localhost:3000](http://localhost:3000)**).
+A fully responsive, animated software developer portfolio website migrated to a modern React + Express architecture.
 
 ---
 
-## 📂 Codebase Architecture
+## 📂 Project Architecture
 
-This codebase is structured as a modular single-page application (SPA):
-* **`index.html`**: The main landing shell containing fonts, the navigation bar, the compiler loading terminal overlay, and the target `#app` container.
-* **`styles.css`**: Contains all variables, themes (light/dark mode layouts), keyframe animations, hover states, and responsive styling.
-* **`script.js`**: Core controller logic:
-  * Simulates the compiler terminal loader screen on entry.
-  * Fetches the component HTML sections from `sections/` dynamically.
-  * Synchronously reveals the contents when the log screen completes typing.
-  * Initializes interactive behaviors: light/dark theme toggle, portfolio status filters, 3D card tilt, and IntersectionObserver scroll reveals.
-* **`sections/`**: Separate raw HTML snippets of all portfolio sections:
-  * `hero.html`
-  * `about.html`
-  * `skills.html`
-  * `projects.html`
-  * `experience.html`
-  * `education.html`
-  * `achievements.html`
-  * `contact.html` (including the footer layout)
+This project is structured as a monorepo containing a frontend client and an Express API backend:
+
+* **`/`** (root): Monorepo orchestrator. Configured with a root `package.json` utilizing `concurrently` to run both frontend and backend concurrently in development.
+* **`client/`**: React SPA bootstrapped with Vite.
+  * Extensively modularized into reusable React components (`Nav`, `LoadingScreen`, `Hero`, `About`, `Skills`, `Projects`, `Experience`, `Education`, `Achievements`, `Contact`, `Footer`).
+  * Features visual theme (light/dark mode) and project status filters driven by React state (`useContext`/`useState`).
+  * Integrates scroll reveals via a custom `useIntersectionObserver` hook.
+  * Connects to `/api` routes via a Vite proxy redirecting requests to `http://localhost:5000` in dev.
+* **`server/`**: Express API backend.
+  * **`GET /api/projects`**: Serves project card entries as JSON.
+  * **`POST /api/contact`**: Receives, validates, and logs contact submissions (ready for nodemailer/resend integration).
+
+---
+
+## 🚀 Local Development Setup
+
+To run both the frontend and backend servers together locally:
+
+### 1. Install Dependencies
+Install dependencies for the root, frontend, and backend folders by running the following script in the root directory:
+```bash
+npm run install-all
+```
+
+### 2. Start the Development Servers
+Spin up both the Vite React dev server (port 5173) and the Express server (port 5000) simultaneously:
+```bash
+npm run dev
+```
+
+Then, open your web browser and navigate to:
+👉 **[http://localhost:5173](http://localhost:5173)**
+
+---
+
+## 🌐 Deployment Instructions
+
+### Frontend (Client)
+Deploy the `client/` folder to static hosts like **Vercel** or **Netlify**:
+* **Build Command**: `npm run build`
+* **Output Directory**: `dist`
+* **Redirects**: Configure single page application redirects (e.g. `vercel.json` or `_redirects` file) so frontend routing works properly.
+
+### Backend (Server)
+Deploy the `server/` folder to server platforms like **Render**, **Railway**, or **Heroku**:
+* **Start Command**: `npm start`
+* **Port**: Ensure the server uses the environment variable `process.env.PORT`.
