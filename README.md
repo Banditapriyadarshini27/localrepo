@@ -53,3 +53,52 @@ Deploy the `client/` folder to static hosts like **Vercel** or **Netlify**:
 Deploy the `server/` folder to server platforms like **Render**, **Railway**, or **Heroku**:
 * **Start Command**: `npm start`
 * **Port**: Ensure the server uses the environment variable `process.env.PORT`.
+
+---
+
+## 📦 Database Layer (SQLite)
+
+The Express backend now includes an SQLite database layer to store contact submissions and visitor activity.
+
+* **Database File**: `server/data/database.sqlite` (Git-ignored)
+* **Tables**:
+  * `messages`: Stores name, email, message, and submission timestamp.
+  * `visitors`: Logs page view hits.
+
+### Inspecting the Database Locally
+You can inspect the database locally using either the SQLite command-line tool or a GUI manager:
+
+#### Option 1: Using the SQLite Command Line Interface (CLI)
+From your terminal:
+```bash
+sqlite3 server/data/database.sqlite
+```
+Run these SQL queries to view data:
+* View contact messages:
+  ```sql
+  SELECT * FROM messages;
+  ```
+* View logged site visits:
+  ```sql
+  SELECT * FROM visitors;
+  ```
+* Exit CLI:
+  ```sql
+  .exit
+  ```
+
+#### Option 2: Using a GUI Tool
+Download and install [DB Browser for SQLite](https://sqlitebrowser.org/). Open the application, choose **Open Database**, and select `server/data/database.sqlite`.
+
+---
+
+## ⚠️ Ephemeral Filesystems & Deployment Notice
+
+> [!WARNING]
+> SQLite stores database data in a local file. If you deploy this project to platforms with **ephemeral filesystems** (such as free tiers on Render, Vercel, or Heroku), any SQLite database file changes will be lost every time the server spins down or redeploys.
+> 
+> **For Production/Multi-Instance Deployments:**
+> We recommend migrating to a hosted PostgreSQL database provider (such as [Supabase](https://supabase.com/) or [Neon](https://neon.tech/)) to persist messages securely across deployments.
+
+
+

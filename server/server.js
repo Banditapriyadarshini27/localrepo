@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { body, validationResult } = require('express-validator');
 require('dotenv').config();
+const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -9,6 +10,18 @@ const PORT = process.env.PORT || 5000;
 // Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
+
+// Middleware to log visitor events when client requests project data (representing main page load)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path === '/api/projects') {
+    try {
+      db.prepare('INSERT INTO visitors (page) VALUES (?)').run('portfolio_home');
+    } catch (err) {
+      console.error('Failed to log visitor event:', err.message);
+    }
+  }
+  next();
+});
 
 // Mock database project entries
 const projects = [
@@ -52,7 +65,7 @@ const projects = [
     tagline: "OT Security Research",
     description: "Research into preventing False Data Injection and Replay Attacks in power grid substations. Analyzed industrial Control System operational technology signals to map out security validation rules for physical sensor safety.",
     stack: ["OT Security", "C++", "Signal Analysis"],
-    "hasCaseStudy": false
+    hasCaseStudy: false
   }
 ];
 
@@ -61,7 +74,7 @@ app.get('/api/projects', (req, res) => {
   res.json(projects);
 });
 
-// POST /api/contact - Validates input fields, logs message, and responds
+// POST /api/contact - Validates input fields, logs message to console and db, and responds
 app.post(
   '/api/contact',
   [
@@ -92,7 +105,7 @@ app.post(
 
     const { name, email, message } = req.body;
 
-    // Structured server-side logging (ready to drop in Nodemailer / Resend integration)
+    // Structured server-side console logging
     console.log('====================================');
     console.log('📥 NEW CONTACT FORM SUBMISSION');
     console.log(`👤 Name:    ${name}`);
@@ -100,12 +113,60 @@ app.post(
     console.log(`💬 Message: ${message}`);
     console.log('====================================');
 
-    res.json({
-      success: true,
-      message: 'Thank you for reaching out! Your message was received successfully.'
-    });
+    try {
+      // Insert contact message into SQLite database
+      const stmt = db.prepare('INSERT INTO messages (name, email, message) VALUES (?, ?, ?)');
+      stmt.run(name, email, message);
+
+      res.json({
+        success: true,
+        message: 'Thank you for reaching out! Your message was received successfully.'
+      });
+    } catch (err) {
+      console.error('Failed to insert message into database:', err.message);
+      res.status(500).json({
+        success: false,
+        error: 'Internal Server Error: Failed to store message.'
+      });
+    }
   }
 );
+
+// GET /api/messages - Protected admin endpoint to retrieve all contact submissions
+app.get('/api/messages', (req, res) => {
+  const token = req.headers['x-admin-token'] || req.headers['authorization'];
+
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  try {
+    const stmt = db.prepare('SELECT * FROM messages ORDER BY created_at DESC');
+    const messages = stmt.all();
+    res.json(messages);
+  } catch (err) {
+    console.error('Failed to fetch messages:', err.message);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
+
+// GET /api/visitors - Protected admin endpoint to retrieve visitor logs
+app.get('/api/visitors', (req, res) => {
+  const token = req.headers['x-admin-token'] || req.headers['authorization'];
+
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  try {
+    const stmt = db.prepare('SELECT * FROM visitors ORDER BY visited_at DESC');
+    const visitors = stmt.all();
+    res.json(visitors);
+  } catch (err) {
+    console.error('Failed to fetch visitors:', err.message);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {

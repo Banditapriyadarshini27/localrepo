@@ -1,1 +1,7 @@
 node_modules
+
+# Local SQLite database data directory and files
+server/data/
+*.sqlite
+*.sqlite-journal
+*.sqlite3
