@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { projectsData } from '../data/projectsData';
 
 const ProjectVisual = ({ id }) => {
   if (id === 'agent-passport-zsp') {
@@ -139,28 +140,11 @@ const ProjectRow = ({ project, index, isFiltered }) => {
 };
 
 const Projects = () => {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(projectsData);
   const [activeFilter, setActiveFilter] = useState('all');
-  const [error, setError] = useState(null);
   const sectionRef = useRef(null);
 
   useIntersectionObserver(sectionRef);
-
-  useEffect(() => {
-    // Fetch projects from express backend endpoint
-    fetch('/api/projects')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to fetch project listings');
-        }
-        return res.json();
-      })
-      .then((data) => setProjects(data))
-      .catch((err) => {
-        console.error('Projects load error:', err);
-        setError(err.message);
-      });
-  }, []);
 
   const filters = ['all', 'live', 'research'];
   const filteredCount = projects.filter(p => activeFilter === 'all' || p.status === activeFilter).length;
@@ -184,12 +168,6 @@ const Projects = () => {
       </div>
 
       <div className="projects-list">
-        {error && (
-          <div style={{ color: 'red', fontFamily: 'var(--mono)', padding: '20px 0' }}>
-            Error loading projects: {error}
-          </div>
-        )}
-
         {projects.map((project, idx) => {
           const isFiltered = activeFilter !== 'all' && project.status !== activeFilter;
           return (
@@ -202,7 +180,7 @@ const Projects = () => {
           );
         })}
 
-        {filteredCount === 0 && !error && projects.length > 0 && (
+        {filteredCount === 0 && projects.length > 0 && (
           <div 
             id="noProjectsMessage"
             style={{

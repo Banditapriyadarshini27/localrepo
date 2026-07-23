@@ -19,26 +19,38 @@ const Contact = () => {
     setStatus({ type: '', message: '' });
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        setStatus({ type: 'success', message: result.message });
-        setFormData({ name: '', email: '', message: '' });
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (apiUrl) {
+        const response = await fetch(`${apiUrl}/api/contact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+          setStatus({ type: 'success', message: result.message });
+          setFormData({ name: '', email: '', message: '' });
+        } else {
+          const errorMsg = result.errors 
+            ? result.errors.map(err => err.msg).join(' ') 
+            : (result.error || 'Something went wrong. Please try again.');
+          setStatus({ type: 'error', message: errorMsg });
+        }
       } else {
-        const errorMsg = result.errors 
-          ? result.errors.map(err => err.msg).join(' ') 
-          : (result.error || 'Something went wrong. Please try again.');
-        setStatus({ type: 'error', message: errorMsg });
+        // Standalone client mode (Vercel static host without backend)
+        const mailtoSubject = encodeURIComponent(`Portfolio Contact from ${formData.name}`);
+        const mailtoBody = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
+        window.location.href = `mailto:bandita28288sony@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
+        
+        setStatus({ 
+          type: 'success', 
+          message: 'Thank you for reaching out! Opening your mail app to send the message directly to Bandita.' 
+        });
+        setFormData({ name: '', email: '', message: '' });
       }
     } catch (err) {
       console.error('Contact submission error:', err);
-      setStatus({ type: 'error', message: 'Could not connect to the server. Please check your connection and try again.' });
+      setStatus({ type: 'error', message: 'Something went wrong. Please try emailing directly at bandita28288sony@gmail.com.' });
     } finally {
       setIsLoading(false);
     }
